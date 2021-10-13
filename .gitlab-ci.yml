@@ -1,5 +1,26 @@
+stages:
+  - build
+  - unit
+  - test
+
+build-test:
+  stage: build
+  image: debian:bullseye
+  script:
+    - apt-get update && apt-get -y install build-essential clang
+    - make tesh
+
+unit-test:
+  stage: unit
+  image: debian:bullseye
+  script:
+    - apt-get update && apt-get -y install build-essential clang
+    - make test
+    - ./test
+
 tesh-tester: # do not modify this test
-        image: debian:bullseye
-        script:
-                - apt-get update && apt-get -y install wget
-                - wget -O - https://members.loria.fr/lnussbaum/RS/tesh-tester | bash
+  stage: test
+  image: debian:bullseye
+  script:
+    - apt-get update && apt-get -y install wget clang
+    - wget -O - https://members.loria.fr/lnussbaum/RS/tesh-tester | bash
