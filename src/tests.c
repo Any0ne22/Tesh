@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "src/snow/snow.h"
+#include "snow/snow.h"
 
 
 describe(sample) {

@@ -1,21 +1,17 @@
-CC=gcc
-CFLAGS=-Wall
-
-all: tesh
-
 # Generals
-CC      = clang
+CC      = gcc
 CFLAGS  = -std=gnu11 -Wall -pedantic -O3 -g 
 LEAKDETECTION = -fsanitize=address -fsanitize=leak -fno-omit-frame-pointer
 SNOWFLAGS = -Isnow -DSNOW_ENABLED
 
 
 # Files
-DIR = .
+DIR = src
 SOURCES = 
 TESHFILE = tesh.c
 SNOWFILE = tests.c
 
+all: tesh
 
 # Targets
 tesh-leak-detection:
