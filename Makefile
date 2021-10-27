@@ -7,7 +7,7 @@ SNOWFLAGS = -Isnow -DSNOW_ENABLED
 
 # Files
 DIR = src
-SOURCES = 
+SOURCES = process.c
 TESHFILE = tesh.c
 SNOWFILE = tests.c
 
