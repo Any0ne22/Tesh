@@ -60,6 +60,15 @@ process* piped_process(process* p1);
  */
 int launch_process(process* p, char* args[], bool pipeOutput);
 
+/** @brief Wait for a process to finish and get its status
+ * 
+ *  Wait for a process to finish and store its status
+ * 
+ *  @param p the process
+ *  @return the status of the process
+ */
+int wait_status(process* p);
+
 /** @brief Free a process
  * 
  *  Clear process from memory.
