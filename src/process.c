@@ -48,6 +48,14 @@ int launch_process(process* p, char* args[], bool pipeOutput) {
 	}
 }
 
+int launch_and_print(process* p, char* args[]) {
+	return launch_process(p, args, false);
+}
+
+int launch_and_pipe(process* p, char* args[]) {
+	return launch_process(p, args, true);
+}
+
 int wait_status(process* p) {
 	waitpid(p->pid, &p->status, 0);
 	return WEXITSTATUS(p->status);

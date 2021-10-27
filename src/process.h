@@ -60,6 +60,26 @@ process* piped_process(process* p1);
  */
 int launch_process(process* p, char* args[], bool pipeOutput);
 
+/** @brief Lauch a command in a new process and print result to terminal
+ * 
+ *  Wrapper for `launch_process` with `pipeOutput` = `false`
+ * 
+ *  @param p the process
+ *  @param args the command to launch (as an array of arguments, terminating with NULL)
+ *  @return the pid of the process
+ */
+int launch_and_print(process* p, char* args[]);
+
+/** @brief Lauch a command in a new process and redirect result to a pipe
+ * 
+ *  Wrapper for `launch_process` with `pipeOutput` = `true`
+ * 
+ *  @param p the process
+ *  @param args the command to launch (as an array of arguments, terminating with NULL)
+ *  @return the pid of the process
+ */
+int launch_and_pipe(process* p, char* args[]);
+
 /** @brief Wait for a process to finish and get its status
  * 
  *  Wait for a process to finish and store its status
