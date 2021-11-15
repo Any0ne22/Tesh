@@ -1,6 +1,6 @@
 # Generals
 CC      = gcc
-CFLAGS  = -std=gnu11 -Wall -pedantic -O3 -g 
+CFLAGS  = -std=gnu11 -Wall -pedantic -O3 -g  -lreadline
 LEAKDETECTION = -fsanitize=address -fsanitize=leak -fno-omit-frame-pointer
 SNOWFLAGS = -Isnow -DSNOW_ENABLED
 
