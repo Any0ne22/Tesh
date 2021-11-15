@@ -1,6 +1,7 @@
 # Generals
 CC      = gcc
-CFLAGS  = -std=gnu11 -Wall -pedantic -O3 -g  -lreadline
+CFLAGS  = -std=gnu11 -Wall -pedantic -O3 -g
+LINKERFLAGS = -lreadline
 LEAKDETECTION = -fsanitize=address -fsanitize=leak -fno-omit-frame-pointer
 SNOWFLAGS = -Isnow -DSNOW_ENABLED
 
@@ -15,17 +16,17 @@ all: tesh
 
 # Targets
 tesh-leak-detection:
-	$(CC) $(CFLAGS) $(LEAKDETECTION) -o tesh $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(TESHFILE)
+	$(CC) $(CFLAGS) $(LEAKDETECTION) -o tesh $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(TESHFILE) $(LINKERFLAGS)
 
 test-leak-detection:
-	$(CC) $(SNOWFLAGS) $(LEAKDETECTION) $(CFLAGS) -o test $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(SNOWFILE)
+	$(CC) $(SNOWFLAGS) $(LEAKDETECTION) $(CFLAGS) -o test $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(SNOWFILE) $(LINKERFLAGS)
 
 # Leak detection doesn't work in docker
 tesh:
-	$(CC) $(CFLAGS) -o tesh $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(TESHFILE)
+	$(CC) $(CFLAGS) -o tesh $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(TESHFILE) $(LINKERFLAGS)
 
 test:
-	$(CC) $(SNOWFLAGS) $(CFLAGS) -o test $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(SNOWFILE)
+	$(CC) $(SNOWFLAGS) $(CFLAGS) -o test $(addprefix $(DIR)/,$(SOURCES)) $(DIR)/$(SNOWFILE) $(LINKERFLAGS)
 
 
 clean:
