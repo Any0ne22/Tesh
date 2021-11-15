@@ -7,14 +7,14 @@ build-test:
   stage: build
   image: debian:bullseye
   script:
-    - apt-get update && apt-get -y install build-essential clang
+    - apt-get update && apt-get -y install build-essential libreadline-dev
     - make tesh
 
 unit-test:
   stage: unit
   image: debian:bullseye
   script:
-    - apt-get update && apt-get -y install build-essential clang
+    - apt-get update && apt-get -y install build-essential libreadline-dev
     - make test
     - ./test
 
@@ -22,5 +22,5 @@ tesh-tester: # do not modify this test
   stage: test
   image: debian:bullseye
   script:
-    - apt-get update && apt-get -y install wget clang
+    - apt-get update && apt-get -y install wget libreadline-dev
     - wget -O - https://members.loria.fr/lnussbaum/RS/tesh-tester | bash
