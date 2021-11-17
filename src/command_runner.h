@@ -10,3 +10,5 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+
+void command_runner(tokens* theToken);

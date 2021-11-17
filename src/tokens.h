@@ -9,14 +9,14 @@
 #pragma once
 
 typedef struct _tokens{
-    char** element;
+    char** elements;
     int size;
-}token;
+}tokens;
 
 
-token* parse(char* input);
-void destroy_token(token * theToken);
-token* new_token();
-void add_token(token* theToken, char* input);
-void clear_token(token* theToken);
+tokens* parse(char* input);
+void destroy_tokens(tokens * theToken);
+tokens* new_tokens();
+void add_token(tokens* theToken, char* input);
+void clear_tokens(tokens* theToken);
 

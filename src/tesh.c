@@ -5,6 +5,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "tokens.h"
+#include "command_runner.h"
 
 
 int main(int argc, char *argv[])
@@ -27,11 +28,10 @@ int main(int argc, char *argv[])
 				free(input);
 				continue;
 			}
-			token* tokens= parse(input);
-			add_token(tokens,"cat");
+			tokens* tokens= parse(input);
 
 			if(!fork()){
-				execvp(tokens->element[0],tokens->element);
+				execvp(tokens->elements[0],tokens->elements);
 				exit(0);
 			}
             free(input);
