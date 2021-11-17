@@ -29,14 +29,15 @@ int main(int argc, char *argv[])
 				continue;
 			}
 			tokens* tokens= parse(input);
-
-			if(!fork()){
+			command_runner(tokens);
+			
+			/*if(!fork()){
 				execvp(tokens->elements[0],tokens->elements);
 				exit(0);
-			}
+			}*/
             free(input);
-			clear_token(tokens);
-			destroy_token(tokens);
+			clear_tokens(tokens);
+			destroy_tokens(tokens);
 		} 
 		else {
 			// If stdin received an EOF (for example via CTRL+D)

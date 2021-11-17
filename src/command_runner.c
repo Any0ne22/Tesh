@@ -1,6 +1,6 @@
 #include "command_runner.h"
 #include "tokens.h"
-
+#include "process.h"
 
 
 void command_runner(tokens* theToken){
@@ -9,7 +9,8 @@ void command_runner(tokens* theToken){
     tokens* theCommand = new_token();
     for(int i=0; i<theToken->size;i++){
         if(theToken->elements[i]==";" || theToken->elements[i]=='||'){
-            int retour=execvp(theCommand->elements[0],theCommand->elements[1]);
+            process* p= new_process();
+            int retour= launch_process(p, theCommand->elements, true);
             destroy_tokens(theCommand);
             return;
         }

@@ -31,6 +31,10 @@ tokens* parse(char* input){
 }
 
 void add_token(tokens* theToken, char* input){
+    if(theToken==NULL){
+        printf("le token en paramètre n'existe pas");
+        exit(-1);
+    }
     theToken->elements= realloc(theToken->elements,(theToken->size+2)*sizeof(char*));
     theToken->elements[theToken->size] = strdup(input);
     theToken->elements[theToken->size+1] = NULL;
@@ -50,7 +54,7 @@ Retourne: rien*/
 }
 
 
-void clear_token(tokens* theToken){
+void clear_tokens(tokens* theToken){
     /* fonction qui enlève tous les tokens et laisse une structure tokens vide*/
     for(int i=0;i<theToken->size;i++){
         free(theToken->elements[i]);
