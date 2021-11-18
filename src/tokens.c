@@ -20,12 +20,13 @@ tokens* parse(char* input){
     char* case_t = strtok(input,limitations);
 
     while(case_t!=NULL){
-        TheToken->elements[TheToken->size] = strdup(case_t);
+        char* copy=strdup(case_t);
+        TheToken->elements[TheToken->size] = copy;
         TheToken->size+=1;
         TheToken->elements= realloc(TheToken->elements,(TheToken->size+1)*sizeof(char*));
         case_t = strtok(NULL,limitations);
+        free(copy);
     }
-
     TheToken->elements[TheToken->size] = NULL;
     return TheToken;
 }
@@ -36,9 +37,11 @@ void add_token(tokens* theToken, char* input){
         exit(-1);
     }
     theToken->elements= realloc(theToken->elements,(theToken->size+2)*sizeof(char*));
-    theToken->elements[theToken->size] = strdup(input);
+    char* copy=strdup(input);
+    theToken->elements[theToken->size] = copy;
     theToken->elements[theToken->size+1] = NULL;
     theToken->size+=1;
+    free(copy);
 }
 
 

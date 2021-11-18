@@ -8,14 +8,6 @@ void command_runner(tokens* theToken){
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
     for(int i=0; i<theToken->size;i++){
-        if(theToken->elements[i]==NULL){
-            /*cas où on arrive à la fin des tokens*/
-            process* p= new_process();
-            launch_and_print(p, theCommand->elements);
-            free(p);
-            destroy_tokens(theCommand);
-            return;
-        }
         if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
@@ -55,6 +47,14 @@ void command_runner(tokens* theToken){
                 free(p);
                 return;
             }
+        } 
+        if(theToken->elements[i]==NULL){
+            /*cas où on arrive à la fin des tokens*/
+            process* p= new_process();
+            launch_and_print(p, theCommand->elements);
+            free(p);
+            destroy_tokens(theCommand);
+            return;
         }
         else{
             add_token(theCommand,theToken->elements[i]);
