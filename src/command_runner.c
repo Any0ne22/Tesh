@@ -7,24 +7,25 @@ void command_runner(tokens* theToken){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
+    process* p= new_process();
     for(int i=0; i<theToken->size;i++){
         if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
-            process* p= new_process();
             launch_and_print(p, theCommand->elements);
             wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
+            process* p = new_process();
             continue;
         }
         else if(strcmp(theToken->elements[i],"&&")==0){
             /* dans ce cas, il faut exécuter la commande d'avant et celle d'après uniquement 
             si le code de retour est de 0 */
-            process* p = new_process();
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
+            process* p = new_process();
             if(retour==0){
                clear_tokens(theCommand);
                continue;
@@ -35,14 +36,14 @@ void command_runner(tokens* theToken){
             }
         }
         /* rajouter si on l'execute après un point virgule quand meme avec un booléen*/
-        
+
         else if(strcmp(theToken->elements[i],"||")==0){
             /* il faut exécuter la commande d'avant et celle d'après uniquement si le code 
             de retour est différent de 0*/
-            process* p= new_process();
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
+            process* p = new_process();
             if(retour!=0){
                 clear_tokens(theCommand);
                 continue;
@@ -52,11 +53,19 @@ void command_runner(tokens* theToken){
                 return;
             }
         } 
+        else if(strcmp(theToken->elements[i],"|")==0){
+            launch_and_print(p,theCommand->elements);
+            /* faire des trucs avec fd_in et fd_out*/
+            process* youhou = piped_process(p);
+            launch_and_pipe(youhou,theCommand->elements);
+            wait_status(youhou);
+            free_process(youhou);
+            continue;
+        }
         else{
             add_token(theCommand,theToken->elements[i]);
         }
-    }
-    process* p= new_process();                
+    }              
     launch_and_print(p, theCommand->elements);
     wait_status(p);                                
     free_process(p);
