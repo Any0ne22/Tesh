@@ -15,7 +15,7 @@ void command_runner(tokens* theToken){
             launch_and_print(p, theCommand->elements);
             wait_status(p);
             clear_tokens(theCommand);
-            free(p);
+            free_process(p);
             continue;
         }
         else if(strcmp(theToken->elements[i],"&&")==0){
@@ -34,6 +34,8 @@ void command_runner(tokens* theToken){
                 return;
             }
         }
+        /* rajouter si on l'execute après un point virgule quand meme avec un booléen*/
+        
         else if(strcmp(theToken->elements[i],"||")==0){
             /* il faut exécuter la commande d'avant et celle d'après uniquement si le code 
             de retour est différent de 0*/

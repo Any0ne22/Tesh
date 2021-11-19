@@ -25,7 +25,6 @@ tokens* parse(char* input){
         TheToken->size+=1;
         TheToken->elements= realloc(TheToken->elements,(TheToken->size+1)*sizeof(char*));
         case_t = strtok(NULL,limitations);
-        free(copy);
     }
     TheToken->elements[TheToken->size] = NULL;
     return TheToken;
@@ -40,7 +39,6 @@ void add_token(tokens* theToken, char* input){
     theToken->elements[theToken->size] = copy;
     theToken->elements[theToken->size+1] = NULL;
     theToken->size+=1;
-    free(copy);
 }
 
 
