@@ -13,52 +13,52 @@ void command_runner(tokens* theToken){
                 pour exécution les commandes d'après*/
             process* p= new_process();
             launch_and_print(p, theCommand->elements);
+            wait_status(p);
             clear_tokens(theCommand);
             free(p);
             continue;
         }
-        if(strcmp(theToken->elements[i],"&&")==0){
+        else if(strcmp(theToken->elements[i],"&&")==0){
             /* dans ce cas, il faut exécuter la commande d'avant et celle d'après uniquement 
             si le code de retour est de 0 */
             process* p = new_process();
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
+            free_process(p);
             if(retour==0){
                clear_tokens(theCommand);
-               free(p); 
                continue;
             }
             else{
-                free(p);
+                destroy_tokens(theCommand);
                 return;
             }
         }
-        if(strcmp(theToken->elements[i],"||")==0){
+        else if(strcmp(theToken->elements[i],"||")==0){
             /* il faut exécuter la commande d'avant et celle d'après uniquement si le code 
             de retour est différent de 0*/
             process* p= new_process();
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
+            free_process(p);
             if(retour!=0){
-                free(p);
+                clear_tokens(theCommand);
                 continue;
             }
             else{
-                free(p);
+                destroy_tokens(theCommand);
                 return;
             }
         } 
-        if(theToken->elements[i]==NULL){
-            /*cas où on arrive à la fin des tokens*/
-            process* p= new_process();
-            launch_and_print(p, theCommand->elements);
-            free(p);
-            destroy_tokens(theCommand);
-            return;
-        }
         else{
             add_token(theCommand,theToken->elements[i]);
         }
     }
+    process* p= new_process();                
+    launch_and_print(p, theCommand->elements);
+    wait_status(p);                                
+    free_process(p);
+    destroy_tokens(theCommand);         
+    return;
 }
 

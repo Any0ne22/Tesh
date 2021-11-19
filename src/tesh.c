@@ -30,13 +30,11 @@ int main(int argc, char *argv[])
 			}
 			tokens* tokens= parse(input);
 			command_runner(tokens);
-			
 			/*if(!fork()){
 				execvp(tokens->elements[0],tokens->elements);
 				exit(0);
 			}*/
             free(input);
-			clear_tokens(tokens);
 			destroy_tokens(tokens);
 		} 
 		else {

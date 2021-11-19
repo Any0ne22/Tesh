@@ -33,8 +33,7 @@ tokens* parse(char* input){
 
 void add_token(tokens* theToken, char* input){
     if(theToken==NULL){
-        printf("le token en paramètre n'existe pas");
-        exit(-1);
+        return;
     }
     theToken->elements= realloc(theToken->elements,(theToken->size+2)*sizeof(char*));
     char* copy=strdup(input);
