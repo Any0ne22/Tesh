@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	bool loop = true;
 
-	while (loop) {
+	/*while (loop) {
 		char* prompt = NULL;
 		if(interactive) prompt = "Prompt :";
 		char* input = readline(prompt);
@@ -30,10 +30,7 @@ int main(int argc, char *argv[])
 			}
 			tokens* tokens= parse(input);
 			command_runner(tokens);
-			/*if(!fork()){
-				execvp(tokens->elements[0],tokens->elements);
-				exit(0);
-			}*/
+
             free(input);
 			destroy_tokens(tokens);
 		} 
@@ -42,7 +39,39 @@ int main(int argc, char *argv[])
 			loop = false;
 			if(interactive) printf("exit\n");
 		}
+	}*/
+
+	while (loop) {
+		char* input = NULL;
+		size_t length = 0;
+		
+		if(interactive) {
+			char* prompt = NULL;
+			prompt = "Prompt :";
+			input = readline(prompt);
+			add_history(input);
+			if(input == NULL) {
+				loop = false;
+				if(interactive) printf("exit\n");
+				break;
+			}
+		} else {
+			if(getline(&input, &length, stdin) == -1)  break;
+		}
+		
+		if(strlen(input) == 0) {
+			free(input);
+			continue;
+		}
+		if(!interactive) strtok(input, "\n");
+
+		tokens* tokens = parse(input);
+		command_runner(tokens);
+
+		free(input);
+		destroy_tokens(tokens);
 	}
+
 
     return EXIT_SUCCESS;
 }
