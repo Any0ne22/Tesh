@@ -2,6 +2,7 @@
 #include "tokens.h"
 #include "process.h"
 #include <string.h>
+#include <stdio.h>
 
 void command_runner(tokens* theToken){
     /* fonction qui va noter les ; et || et va rediriger dans un 
@@ -14,9 +15,9 @@ void command_runner(tokens* theToken){
                 pour exécution les commandes d'après*/
             launch_and_print(p, theCommand->elements);
             wait_status(p);
-            clear_tokens(theCommand);
             free_process(p);
-            process* p = new_process();
+            p = new_process();   
+            clear_tokens(theCommand);
             continue;
         }
         else if(strcmp(theToken->elements[i],"&&")==0){
@@ -25,7 +26,7 @@ void command_runner(tokens* theToken){
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
-            process* p = new_process();
+            p = new_process();             
             if(retour==0){
                clear_tokens(theCommand);
                continue;
@@ -43,7 +44,7 @@ void command_runner(tokens* theToken){
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
-            process* p = new_process();
+            p = new_process();
             if(retour!=0){
                 clear_tokens(theCommand);
                 continue;
@@ -54,12 +55,11 @@ void command_runner(tokens* theToken){
             }
         } 
         else if(strcmp(theToken->elements[i],"|")==0){
-            launch_and_print(p,theCommand->elements);
-            /* faire des trucs avec fd_in et fd_out*/
+            launch_and_pipe(p,theCommand->elements);
             process* youhou = piped_process(p);
-            launch_and_pipe(youhou,theCommand->elements);
-            wait_status(youhou);
-            free_process(youhou);
+            clear_tokens(theCommand);
+            free_process(p);
+            p = youhou;
             continue;
         }
         else{
