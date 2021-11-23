@@ -16,30 +16,6 @@ int main(int argc, char *argv[])
 
 	bool loop = true;
 
-	/*while (loop) {
-		char* prompt = NULL;
-		if(interactive) prompt = "Prompt :";
-		char* input = readline(prompt);
-		
-		add_history(input);
-
-		if(input != NULL) {
-			if(strlen(input) == 0) {
-				free(input);
-				continue;
-			}
-			tokens* tokens= parse(input);
-			command_runner(tokens);
-
-            free(input);
-			destroy_tokens(tokens);
-		} 
-		else {
-			// If stdin received an EOF (for example via CTRL+D)
-			loop = false;
-			if(interactive) printf("exit\n");
-		}
-	}*/
 
 	while (loop) {
 		char* input = NULL;
