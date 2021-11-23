@@ -3,21 +3,27 @@
 #include "process.h"
 #include <string.h>
 #include <stdio.h>
+#include "stdbool.h"
 
 void command_runner(tokens* theToken){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
     process* p= new_process();
+    bool isSkipped = false;
     for(int i=0; i<theToken->size;i++){
         if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
+            isSkipped =false;
             launch_and_print(p, theCommand->elements);
             wait_status(p);
             free_process(p);
             p = new_process();   
             clear_tokens(theCommand);
+            continue;
+        }
+        else if(isSkipped==true){
             continue;
         }
         else if(strcmp(theToken->elements[i],"&&")==0){
@@ -32,8 +38,8 @@ void command_runner(tokens* theToken){
                continue;
             }
             else{
-                destroy_tokens(theCommand);
-                return;
+                isSkipped=true;
+                clear_tokens(theCommand);
             }
         }
         /* rajouter si on l'execute après un point virgule quand meme avec un booléen*/
@@ -50,8 +56,8 @@ void command_runner(tokens* theToken){
                 continue;
             }
             else{
-                destroy_tokens(theCommand);
-                return;
+                isSkipped=true;
+                clear_tokens(theCommand);
             }
         } 
         else if(strcmp(theToken->elements[i],"|")==0){
