@@ -16,6 +16,9 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+#include  <signal.h>
+#include "signals.h"
 
 /** @brief Run a command in background or foreground
  * 
@@ -28,3 +31,9 @@
  *  @param cmd an array of tokens with the command to run
  */
 void command_scheduler(tokens* cmd);
+
+/** @brief Kill the command running in foreground
+ * 
+ *  Send SIGINT to the command running in foreground
+ */
+void kill_foreground();

@@ -7,6 +7,7 @@
 #include "tokens.h"
 #include "command_runner.h"
 #include "command_scheduler.h"
+#include "signals.h"
 
 
 int main(int argc, char *argv[])
@@ -14,6 +15,7 @@ int main(int argc, char *argv[])
     bool interactive = false;
 	if (isatty(fileno(stdin))) interactive = true;
 
+	sig_setter();
 
 	bool loop = true;
 

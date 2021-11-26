@@ -25,7 +25,17 @@ void command_scheduler(tokens* cmd) {
 			printf("[%d]\n", pid);
 		}
 	} else {
-		command_runner(cmd);
+		pid_t pid = fork();
+		if(!pid) {
+			sig_setter_process();
+			command_runner(cmd);
+			exit(0);
+		} else {
+			int status;
+			foreground = pid;
+			waitpid(pid, &status, 0);
+			foreground = 0;
+		}		
 	}
 }
 
