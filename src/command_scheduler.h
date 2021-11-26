@@ -9,15 +9,16 @@
  */
 #pragma once
 
-#include "process.h"
-#include "command_runner.h"
-#include "tokens.h"
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include  <signal.h>
+#include <signal.h>
+#include <errno.h>
+#include "process.h"
+#include "command_runner.h"
+#include "tokens.h"
 #include "signals.h"
 
 /** @brief Run a command in background or foreground
@@ -34,6 +35,7 @@ void command_scheduler(tokens* cmd);
 
 /** @brief Kill the command running in foreground
  * 
- *  Send SIGINT to the command running in foreground
+ *  Send SIGINT to the command running in foreground and all its child
+ *  processes
  */
 void kill_foreground();

@@ -3,7 +3,7 @@
 
 void sig_handler(int sig) {
     if(sig == SIGINT) {
-		// Send the signal to the foreground process and all child processes
+		// Send the SIGINT signal to the foreground process and all child processes
         kill_foreground();
 		printf("\n");
 	}
