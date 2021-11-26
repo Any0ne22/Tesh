@@ -6,6 +6,7 @@
 #include <readline/history.h>
 #include "tokens.h"
 #include "command_runner.h"
+#include "command_scheduler.h"
 
 
 int main(int argc, char *argv[])
@@ -42,10 +43,9 @@ int main(int argc, char *argv[])
 		if(!interactive) strtok(input, "\n");
 
 		tokens* tokens = parse(input);
-		command_runner(tokens);
-
-		free(input);
+		command_scheduler(tokens);
 		destroy_tokens(tokens);
+		free(input);
 	}
 
 

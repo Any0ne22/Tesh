@@ -8,3 +8,23 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+
+#include "process.h"
+#include "command_runner.h"
+#include "tokens.h"
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+/** @brief Run a command in background or foreground
+ * 
+ *  Parse the command given as argument and run the command in background (if
+ *  the command ends with &) or in foreground.
+ *  If the command run in background, a new process is created to run the
+ *  command and its pid is stored until the command ends. Else, the command
+ *  run in foreground and the command return when the process ends.
+ * 
+ *  @param cmd an array of tokens with the command to run
+ */
+void command_scheduler(tokens* cmd);
