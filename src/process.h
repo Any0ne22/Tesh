@@ -15,6 +15,8 @@
 #include <sys/wait.h>
 #include <stdbool.h> 
 #include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
 
 /** @brief A struct for managing a process
  * 

@@ -35,6 +35,9 @@ int launch_process(process* p, char* args[], bool pipeOutput) {
 		}
 
 		int errcode = execvp(args[0], args);
+		if(errno == 2) {
+			printf("Error: command %s not found\n", args[0]);
+		}
 		exit(errcode);
 	} else {
 		// Parent process
