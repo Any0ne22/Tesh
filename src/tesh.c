@@ -26,6 +26,7 @@ int main(int argc, char *argv[])
 		
 		if(interactive) {
 			char* prompt = NULL;
+			
 			prompt = "Prompt :";
 			input = readline(prompt);
 			add_history(input);
