@@ -22,7 +22,7 @@
 
 /** @brief A struct for managing a process
  * 
- *  Allow to lauch a command in a process, get its status, pid, and to make pipes on
+ *  Allow to launch a command in a process, get its status, pid, and to make pipes on
  *  stdin or stdout.
  */
 typedef struct _process {

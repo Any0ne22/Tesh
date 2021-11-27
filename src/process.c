@@ -70,7 +70,6 @@ int pipe_to_file(process* p, char* args[], char* filename, bool append) {
     		dup2(p->fd_in[0],STDIN_FILENO);
 			close(p->fd_in[0]);
 		}
-
 		int errcode = execvp(args[0], args);
 		exit(errcode);
 	} else {
