@@ -8,7 +8,7 @@
 #include "command_runner.h"
 #include "command_scheduler.h"
 #include "signals.h"
-
+#include "prompt.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,16 +25,17 @@ int main(int argc, char *argv[])
 		size_t length = 0;
 		
 		if(interactive) {
-			char* prompt = NULL;
-			
-			prompt = "Prompt :";
+			char* prompt = make_prompt();
+
 			input = readline(prompt);
+			free(prompt);
 			add_history(input);
 			if(input == NULL) {
 				loop = false;
 				if(interactive) printf("exit\n");
 				break;
 			}
+
 		} else {
 			if(getline(&input, &length, stdin) == -1)  break;
 		}
