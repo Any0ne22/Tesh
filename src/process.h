@@ -97,6 +97,8 @@ int launch_and_pipe(process* p, char* args[]);
  */
 int pipe_to_file(process* p, char* args[], char* filename, bool append);
 
+int pipe_from_file(process* p, char* args[], char* filename);
+
 /** @brief Wait for a process to finish and get its status
  * 
  *  Wait for a process to finish and store its status

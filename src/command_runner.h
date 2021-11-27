@@ -12,4 +12,11 @@
 #pragma once
 #include "tokens.h"
 
+/** @brief Execute the command
+ * 
+ *  Search the elements of the command and execute them in order 
+ * 
+ *  @param p the parsed command to execute
+ *  @return void
+ */
 void command_runner(tokens* theToken);
