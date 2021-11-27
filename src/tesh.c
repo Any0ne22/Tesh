@@ -10,6 +10,22 @@
 #include "signals.h"
 #include "prompt.h"
 
+char* readLineFromStdin() {
+	char* result = NULL;
+	int size = 0;
+	char c[1];
+	while(read(STDIN_FILENO, c, 1) && c[0] != '\n' && c[0] != EOF) {
+		result = realloc(result, (++size)*sizeof(char));
+		result[size-1] = c[0];
+	}
+	if(size != 0 || c[0] == '\n') {
+		result = realloc(result, (++size)*sizeof(char));
+		result[size-1] = '\0';
+	}
+	return result;
+}
+
+
 int main(int argc, char *argv[])
 {
     bool interactive = false;
@@ -19,10 +35,8 @@ int main(int argc, char *argv[])
 
 	bool loop = true;
 
-
 	while (loop) {
 		char* input = NULL;
-		size_t length = 0;
 		
 		if(interactive) {
 			char* prompt = make_prompt();
@@ -37,7 +51,9 @@ int main(int argc, char *argv[])
 			}
 
 		} else {
-			if(getline(&input, &length, stdin) == -1)  break;
+			if((input = readLineFromStdin()) == NULL){
+				break;
+			}
 		}
 		
 		if(strlen(input) == 0) {

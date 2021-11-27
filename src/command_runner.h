@@ -11,6 +11,13 @@
  */
 #pragma once
 #include "tokens.h"
+#include "process.h"
+#include <string.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>   
+#include "stdbool.h"
 
 /** @brief Execute the command
  * 
@@ -19,4 +26,4 @@
  *  @param p the parsed command to execute
  *  @return void
  */
-void command_runner(tokens* theToken);
+pid_t command_runner(tokens* theToken);
