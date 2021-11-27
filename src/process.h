@@ -41,7 +41,7 @@ typedef struct _process {
  */
 process* new_process();
 
-/** @brief New process struct with piped on another process
+/** @brief New process struct with stdin piped on another process
  * 
  *  Create a new process struct and pipe stdin on the stdout of
  *  the process given in parameters.
@@ -50,6 +50,17 @@ process* new_process();
  *  @return a pointer to a process
  */
 process* piped_process(process* p1);
+
+/** @brief New process struct with stdin piped on a file 
+ * 
+ *  Create a new process struct and pipe stdin on the content of
+ *  the file given in parameters.
+ * 
+ *  @param filename the name of the file piped
+ *  @return a pointer to a process
+ */
+process* piped_process_from_file(char* filename);
+
 
 /** @brief Lauch a command in a new process
  * 
@@ -96,8 +107,6 @@ int launch_and_pipe(process* p, char* args[]);
  *  @return the pid of the process
  */
 int pipe_to_file(process* p, char* args[], char* filename, bool append);
-
-int pipe_from_file(process* p, char* args[], char* filename);
 
 /** @brief Wait for a process to finish and get its status
  * 
