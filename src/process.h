@@ -15,6 +15,8 @@
 #include <sys/wait.h>
 #include <stdbool.h> 
 #include <sys/types.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 /** @brief A struct for managing a process
  * 
@@ -79,6 +81,19 @@ int launch_and_print(process* p, char* args[]);
  *  @return the pid of the process
  */
 int launch_and_pipe(process* p, char* args[]);
+
+/** @brief Lauch a process and pipe its content to a file
+ * 
+ *  Clear process from memory.
+ * 
+ *  @param p the process
+ *  @param args the command to launch (as an array of arguments, terminating with NULL)
+ *  @param filename the name of the file to write to
+ *  @param append if true the new content is put at the end of the file, if not the actual
+ *  content is deleted
+ *  @return the pid of the process
+ */
+int pipe_to_file(process* p, char* args[], char* filename, bool append);
 
 /** @brief Wait for a process to finish and get its status
  * 
