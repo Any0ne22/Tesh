@@ -85,10 +85,8 @@ void command_runner(tokens* theToken){
             i++;
         }
         else if(strcmp(theToken->elements[i],"<")==0){
-            pipe_from_file(p,theCommand->elements,theToken->elements[i+1]);
-            clear_tokens(theCommand);
             free_process(p);
-            p = new_process();
+            p = piped_process_from_file(theToken->elements[i+1]);
             i++;
         }
         else{
