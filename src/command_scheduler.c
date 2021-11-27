@@ -47,8 +47,8 @@ void command_scheduler(tokens* cmd) {
 		}
 	} else {
 		// Else, run the command in foreground
-		pid_t pid = fork();
-		if(!pid) {
+		//pid_t pid = fork();
+		/*if(!pid) {
 			sig_setter_process();
 			command_runner(cmd);
 			exit(0);
@@ -56,7 +56,10 @@ void command_scheduler(tokens* cmd) {
 			foreground = pid;
 			waitpid(pid, NULL, 0);
 			foreground = 0;
-		}
+		}*/
+		foreground = command_runner(cmd);
+		waitpid(foreground, NULL, 0);
+		foreground = 0;
 	}
 }
 

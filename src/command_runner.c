@@ -1,14 +1,6 @@
 #include "command_runner.h"
-#include "tokens.h"
-#include "process.h"
-#include <string.h>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>   
-#include "stdbool.h"
 
-void command_runner(tokens* theToken){
+pid_t command_runner(tokens* theToken){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
@@ -94,9 +86,10 @@ void command_runner(tokens* theToken){
         }
     }              
     launch_and_print(p, theCommand->elements);
-    wait_status(p);                                
+    wait_status(p);
+    pid_t pid = p->pid;
     free_process(p);
     destroy_tokens(theCommand);         
-    return;
+    return pid;
 }
 
