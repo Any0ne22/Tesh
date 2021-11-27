@@ -16,7 +16,7 @@ void sig_setter() {
 	sigaction(SIGINT, &nvt, &old);
 
 	// Ignore SIGCHLD to allow child processes to die
-	signal(SIGCHLD, SIG_IGN);
+	//signal(SIGCHLD, SIG_IGN);
 }
 
 void die(int sig) {
