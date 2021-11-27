@@ -6,6 +6,8 @@
 #include <readline/history.h>
 #include "tokens.h"
 #include "command_runner.h"
+#include "command_scheduler.h"
+#include "signals.h"
 
 
 int main(int argc, char *argv[])
@@ -13,6 +15,7 @@ int main(int argc, char *argv[])
     bool interactive = false;
 	if (isatty(fileno(stdin))) interactive = true;
 
+	sig_setter();
 
 	bool loop = true;
 
@@ -42,10 +45,9 @@ int main(int argc, char *argv[])
 		if(!interactive) strtok(input, "\n");
 
 		tokens* tokens = parse(input);
-		command_runner(tokens);
-
-		free(input);
+		command_scheduler(tokens);
 		destroy_tokens(tokens);
+		free(input);
 	}
 
 
