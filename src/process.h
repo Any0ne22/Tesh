@@ -15,10 +15,14 @@
 #include <sys/wait.h>
 #include <stdbool.h> 
 #include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 /** @brief A struct for managing a process
  * 
- *  Allow to lauch a command in a process, get its status, pid, and to make pipes on
+ *  Allow to launch a command in a process, get its status, pid, and to make pipes on
  *  stdin or stdout.
  */
 typedef struct _process {
@@ -37,7 +41,7 @@ typedef struct _process {
  */
 process* new_process();
 
-/** @brief New process struct with piped on another process
+/** @brief New process struct with stdin piped on another process
  * 
  *  Create a new process struct and pipe stdin on the stdout of
  *  the process given in parameters.
@@ -46,6 +50,17 @@ process* new_process();
  *  @return a pointer to a process
  */
 process* piped_process(process* p1);
+
+/** @brief New process struct with stdin piped on a file 
+ * 
+ *  Create a new process struct and pipe stdin on the content of
+ *  the file given in parameters.
+ * 
+ *  @param filename the name of the file piped
+ *  @return a pointer to a process
+ */
+process* piped_process_from_file(char* filename);
+
 
 /** @brief Lauch a command in a new process
  * 
@@ -79,6 +94,19 @@ int launch_and_print(process* p, char* args[]);
  *  @return the pid of the process
  */
 int launch_and_pipe(process* p, char* args[]);
+
+/** @brief Lauch a process and pipe its content to a file
+ * 
+ *  Clear process from memory.
+ * 
+ *  @param p the process
+ *  @param args the command to launch (as an array of arguments, terminating with NULL)
+ *  @param filename the name of the file to write to
+ *  @param append if true the new content is put at the end of the file, if not the actual
+ *  content is deleted
+ *  @return the pid of the process
+ */
+int pipe_to_file(process* p, char* args[], char* filename, bool append);
 
 /** @brief Wait for a process to finish and get its status
  * 

@@ -10,3 +10,21 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+#include "tokens.h"
+#include "process.h"
+#include <string.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>   
+#include "builtins.h"
+#include "stdbool.h"
+
+/** @brief Execute the command
+ * 
+ *  Search the elements of the command and execute them in order 
+ * 
+ *  @param p the parsed command to execute
+ *  @return void
+ */
+pid_t command_runner(tokens* theToken);
