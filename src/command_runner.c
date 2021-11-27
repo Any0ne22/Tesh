@@ -3,6 +3,9 @@
 #include "process.h"
 #include <string.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>   
 #include "stdbool.h"
 
 void command_runner(tokens* theToken){
@@ -66,7 +69,23 @@ void command_runner(tokens* theToken){
             clear_tokens(theCommand);
             free_process(p);
             p = youhou;
-            continue;
+        }
+        else if(strcmp(theToken->elements[i],">")==0){
+            pipe_to_file(p,theCommand->elements,theToken->elements[i+1],false);
+            clear_tokens(theCommand);
+            free_process(p);
+            p = new_process();
+            isSkipped=true;
+        }
+        else if(strcmp(theToken->elements[i],">>")==0){
+            pipe_to_file(p,theCommand->elements,theToken->elements[i+1],true);
+            clear_tokens(theCommand);
+            free_process(p);
+            p = new_process();
+            isSkipped=true;
+        }
+        else if(strcmp(theToken->elements[i],"<")==0){
+
         }
         else{
             add_token(theCommand,theToken->elements[i]);

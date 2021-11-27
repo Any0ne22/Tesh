@@ -8,6 +8,10 @@
  */
 #pragma once
 
+/** @brief A struct for
+ * 
+ *  
+ */
 typedef struct _tokens{
     char** elements;
     int size;
