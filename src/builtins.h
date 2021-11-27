@@ -8,3 +8,12 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+
+/** @brief Change directory
+ * 
+ *  Execute the command cd as a builtin command
+ * 
+ *  @param p1 the directory filename
+ *  @return void
+ */
+void make_cd(char* filename);

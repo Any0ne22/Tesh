@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>   
 #include "stdbool.h"
+#include "builtins.h"
 
 void command_runner(tokens* theToken){
     /* fonction qui va noter les ; et || et va rediriger dans un 
@@ -15,7 +16,11 @@ void command_runner(tokens* theToken){
     process* p= new_process();
     bool isSkipped = false;
     for(int i=0; i<theToken->size;i++){
-        if(strcmp(theToken->elements[i],";")==0){
+        if(i==0 && strcmp(theToken->elements[i],"cd")==0){
+            make_cd(theToken->elements[i+1]);
+            i++;
+        }
+        else if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
             isSkipped =false;
