@@ -1,6 +1,6 @@
 #include "command_runner.h"
 
-pid_t command_runner(tokens* theToken){
+pid_t command_runner(tokens* theToken, bool erreur){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
@@ -50,7 +50,7 @@ pid_t command_runner(tokens* theToken){
             int retour= wait_status(p);
             free_process(p);
             p = new_process();
-            if(retour!=0){
+            if(retour!=0 && erreur!=true){
                 clear_tokens(theCommand);
                 continue;
             }
