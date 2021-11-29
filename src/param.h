@@ -8,6 +8,7 @@
  */
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #pragma once
 
 typedef struct parametres_ {
