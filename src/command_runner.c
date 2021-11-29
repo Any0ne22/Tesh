@@ -6,6 +6,7 @@ pid_t command_runner(tokens* theToken){
     tokens* theCommand = new_tokens();
     process* p= new_process();
     bool isSkipped = false;
+    bool isSuccessful = true;
     for(int i=0; i<theToken->size;i++){
         if(i==0 && strcmp(theToken->elements[i],"cd")==0){
             make_cd(theToken->elements[i+1]);
@@ -15,6 +16,7 @@ pid_t command_runner(tokens* theToken){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
             isSkipped =false;
+            isSuccessful = true,
             launch_and_print(p, theCommand->elements);
             wait_status(p);
             free_process(p);
@@ -22,23 +24,25 @@ pid_t command_runner(tokens* theToken){
             clear_tokens(theCommand);
             continue;
         }
-        else if(isSkipped==true){
-            continue;
-        }
         else if(strcmp(theToken->elements[i],"&&")==0){
             /* dans ce cas, il faut exécuter la commande d'avant et celle d'après uniquement 
             si le code de retour est de 0 */
+            if(isSkipped) {
+                if(isSuccessful) isSkipped = false;
+                continue;
+            }
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
-            p = new_process();             
+            p = new_process();
+            clear_tokens(theCommand);      
             if(retour==0){
-               clear_tokens(theCommand);
+               isSuccessful = true;
                continue;
             }
             else{
-                isSkipped=true;
-                clear_tokens(theCommand);
+                isSkipped = true;
+                isSuccessful = false;
             }
         }
         /* rajouter si on l'execute après un point virgule quand meme avec un booléen*/
@@ -46,19 +50,27 @@ pid_t command_runner(tokens* theToken){
         else if(strcmp(theToken->elements[i],"||")==0){
             /* il faut exécuter la commande d'avant et celle d'après uniquement si le code 
             de retour est différent de 0*/
+            if(isSkipped) {
+                if(!isSuccessful) isSkipped = false;
+                continue;
+            }
             launch_and_print(p,theCommand->elements);
             int retour= wait_status(p);
             free_process(p);
             p = new_process();
+            clear_tokens(theCommand);
             if(retour!=0){
-                clear_tokens(theCommand);
+                isSuccessful = false;
                 continue;
             }
             else{
-                isSkipped=true;
-                clear_tokens(theCommand);
+                isSkipped = true;
+                isSuccessful = true;
             }
         } 
+        else if(isSkipped==true){
+            continue;
+        }
         else if(strcmp(theToken->elements[i],"|")==0){
             launch_and_pipe(p,theCommand->elements);
             process* youhou = piped_process(p);

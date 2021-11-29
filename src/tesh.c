@@ -38,8 +38,6 @@ int main(int argc, char *argv[])
 		interactive = false;
 	}
 
-    
-
 	sig_setter();
 
 	bool loop = true;
@@ -72,6 +70,6 @@ int main(int argc, char *argv[])
 		destroy_tokens(tokens);
 	}
 
-
+	close(source);
     return EXIT_SUCCESS;
 }
