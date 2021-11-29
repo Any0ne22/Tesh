@@ -16,10 +16,12 @@ process* piped_process(process* p1) {
 	return p;
 }
 
-process* piped_process_from_file( char* filename) {
+process* piped_process_from_file(char* filename) {
 	process* p = calloc(1,sizeof(process));
 	int file_fd = open(filename, O_RDONLY, S_IRUSR);
-    dup2(file_fd, p->fd_in[1]);
+	pipe(p->fd_in);
+    dup2(file_fd, p->fd_in[0]);
+	close(file_fd);
 	pipe(p->fd_out);
 	p->status = -1;
 	return p;
