@@ -10,11 +10,11 @@
 #include "signals.h"
 #include "prompt.h"
 
-char* readLineFromStdin() {
+char* readLineFrom(int fd) {
 	char* result = NULL;
 	int size = 0;
 	char c[1];
-	while(read(STDIN_FILENO, c, 1) && c[0] != '\n' && c[0] != EOF) {
+	while(read(fd, c, 1) && c[0] != '\n' && c[0] != EOF) {
 		result = realloc(result, (++size)*sizeof(char));
 		result[size-1] = c[0];
 	}
@@ -28,8 +28,17 @@ char* readLineFromStdin() {
 
 int main(int argc, char *argv[])
 {
-    bool interactive = false;
+	bool interactive = false;
 	if (isatty(fileno(stdin))) interactive = true;
+
+	// Parsing args
+	int source = STDIN_FILENO;
+	if(argc > 1) {
+		source = open(argv[1], O_RDONLY, S_IRUSR);
+		interactive = false;
+	}
+
+    
 
 	sig_setter();
 
@@ -40,32 +49,27 @@ int main(int argc, char *argv[])
 		
 		if(interactive) {
 			char* prompt = make_prompt();
-
 			input = readline(prompt);
 			free(prompt);
 			add_history(input);
-			if(input == NULL) {
-				loop = false;
-				if(interactive) printf("exit\n");
-				break;
-			}
-
 		} else {
-			if((input = readLineFromStdin()) == NULL){
-				break;
-			}
+			input = readLineFrom(source);
 		}
-		
-		if(strlen(input) == 0) {
+
+		if(input == NULL) {
+			if(interactive) printf("exit\n");
+			break;
+		}
+
+		if(input[0] == '\0') {
 			free(input);
 			continue;
 		}
-		if(!interactive) strtok(input, "\n");
 
 		tokens* tokens = parse(input);
+		free(input);
 		command_scheduler(tokens);
 		destroy_tokens(tokens);
-		free(input);
 	}
 
 
