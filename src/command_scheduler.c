@@ -24,7 +24,7 @@ void check_running_commands() {
 	}
 }
 
-void command_scheduler(tokens* cmd, bool erreur) {
+void command_scheduler(tokens* cmd) {
 	// Checking state of background commands
 	check_running_commands();
 	// Searching for &
@@ -38,7 +38,7 @@ void command_scheduler(tokens* cmd, bool erreur) {
 
 		pid_t pid = fork();
 		if(!pid) {
-			command_runner(cmd, erreur);
+			command_runner(cmd);
 			exit(0);
 		} else {
 			background = realloc(background, (backgroundProcessNumber+1)*sizeof(pid_t));
@@ -57,7 +57,7 @@ void command_scheduler(tokens* cmd, bool erreur) {
 			waitpid(pid, NULL, 0);
 			foreground = 0;
 		}*/
-		foreground = command_runner(cmd, erreur);
+		foreground = command_runner(cmd);
 		waitpid(foreground, NULL, 0);
 		foreground = 0;
 	}

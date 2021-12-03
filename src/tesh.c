@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
 		tokens* tokens = parse(input);
 		free(input);
-		command_scheduler(tokens,erreur);
+		command_scheduler(tokens);
 		destroy_tokens(tokens);
 	}
 
