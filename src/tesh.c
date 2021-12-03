@@ -9,6 +9,9 @@
 #include "command_scheduler.h"
 #include "signals.h"
 #include "prompt.h"
+#include "param.h"
+
+
 
 char* readLineFrom(int fd) {
 	char* result = NULL;
@@ -28,13 +31,14 @@ char* readLineFrom(int fd) {
 
 int main(int argc, char *argv[])
 {
+	parametres* param = read_param(argc,argv);
 	bool interactive = false;
 	if (isatty(fileno(stdin))) interactive = true;
 
 	// Parsing args
 	int source = STDIN_FILENO;
-	if(argc > 1) {
-		source = open(argv[1], O_RDONLY, S_IRUSR);
+	if(param->fichier != NULL) {
+		source = open(param->fichier, O_RDONLY, S_IRUSR);
 		interactive = false;
 	}
 

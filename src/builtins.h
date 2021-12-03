@@ -8,6 +8,8 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+#include <stdio.h>
+#include <unistd.h>
 
 /** @brief Change directory
  * 
