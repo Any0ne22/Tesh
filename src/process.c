@@ -51,6 +51,8 @@ int launch_process(process* p, char* args[], bool pipeOutput) {
 		}
 		exit(errno);
 	} else {
+		if(!pipeOutput) close(p->fd_out[1]);
+		if(!pipeOutput) close(p->fd_out[0]);
 		// Parent process
 		if(p->fd_in[0] != 0 || p->fd_in[1] != 0) {
 			// Close the descriptors if there was a pipe on the standard input
@@ -74,6 +76,7 @@ int pipe_to_file(process* p, char* args[], char* filename, bool append) {
 		int flags = (append ? O_APPEND : O_TRUNC) | O_WRONLY | O_CREAT;
 		int file_fd = open(filename, flags, S_IRUSR | S_IWUSR);
     	dup2(file_fd,STDOUT_FILENO);
+		close(file_fd);
 
 		if(p->fd_in[0] != 0 || p->fd_in[1] != 0) {
 			// Pipe the standard input to the fd if it is initialized
@@ -84,6 +87,8 @@ int pipe_to_file(process* p, char* args[], char* filename, bool append) {
 		int errcode = execvp(args[0], args);
 		exit(errcode);
 	} else {
+		close(p->fd_out[1]);
+		close(p->fd_out[0]);
 		// Parent process
 		if(p->fd_in[0] != 0 || p->fd_in[1] != 0) {
 			// Close the descriptors if there was a pipe on the standard input

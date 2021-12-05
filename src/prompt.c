@@ -1,19 +1,16 @@
 #define _GNU_SOURCE
 #include "prompt.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 char* make_prompt(){
-    char Hostname[32];
-    gethostname(&Hostname[0],32);
-    char* Repertoire= get_current_dir_name();
-    char* Utilisateur = getlogin();
-    char* prompt=malloc(sizeof(char)*(strlen(Repertoire)+strlen(Utilisateur)+strlen(&Hostname[0])+5));
-    sprintf(prompt,"%s@%s:%s$", Utilisateur, &Hostname[0],Repertoire);
-    free(Repertoire);
+    char Hostname[255];
+    char Utilisateur[255];
+    char Repertoire[255];
+    getcwd(Repertoire, 255);
+    gethostname(Hostname,255);
+    cuserid(Utilisateur);
+
+    char* prompt=malloc(sizeof(char)*((strlen(Repertoire)+strlen(Utilisateur)+strlen(Hostname))+5));
+    snprintf(prompt,1024, "%s@%s:%s$ ", Utilisateur, Hostname,Repertoire);
     return prompt;
 }
 

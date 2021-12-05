@@ -1,7 +1,7 @@
 stages:
   - build
-  - unit
-  - test
+  - tests
+  - tesh-tester
 
 build-test:
   stage: build
@@ -11,15 +11,23 @@ build-test:
     - make tesh
 
 unit-test:
-  stage: unit
+  stage: tests
   image: debian:bullseye
   script:
     - apt-get update && apt-get -y install build-essential libreadline-dev
     - make test
     - ./test
 
+test-script:
+  stage: tests
+  image: debian:bullseye
+  script:
+    - apt-get update && apt-get -y install build-essential libreadline-dev
+    - chmod +x ./tests/tester.sh
+    - ./tests/tester.sh
+
 tesh-tester: # do not modify this test
-  stage: test
+  stage: tesh-tester
   image: debian:bullseye
   script:
     - apt-get update && apt-get -y install wget libreadline-dev
