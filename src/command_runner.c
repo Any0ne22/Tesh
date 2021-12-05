@@ -80,6 +80,7 @@ pid_t command_runner(tokens* theToken){
         }
         else if(strcmp(theToken->elements[i],">")==0){
             pipe_to_file(p,theCommand->elements,theToken->elements[i+1],false);
+            wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
             p = new_process();
@@ -87,6 +88,7 @@ pid_t command_runner(tokens* theToken){
         }
         else if(strcmp(theToken->elements[i],">>")==0){
             pipe_to_file(p,theCommand->elements,theToken->elements[i+1],true);
+            wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
             p = new_process();

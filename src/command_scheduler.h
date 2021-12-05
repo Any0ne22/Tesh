@@ -39,3 +39,12 @@ void command_scheduler(tokens* cmd);
  *  processes
  */
 void kill_foreground();
+
+/** @brief Put a background process in foreground
+ * 
+ *  Find the process with the given pid (or one of the background processes if
+ *  pid is 0).
+ * 
+ *  @param pid the pid of a background process (or 0 for any)
+ */
+void put_in_foreground(pid_t pid);

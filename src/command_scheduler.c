@@ -8,25 +8,7 @@ pid_t* background = NULL;
 int backgroundProcessNumber = 0;
 
 
-void check_running_commands() {
-	bool clean = true;
-    for(int i=0; i < backgroundProcessNumber; i++) {
-		if(!background[i]) continue;
-		clean = false;
-        kill(background[i], 0);
-		if(errno != 0) {
-			background[i] = 0;
-		}
-    }
-	if(clean) {
-		background = realloc(background, 0);
-		backgroundProcessNumber = 0;
-	}
-}
-
 void command_scheduler(tokens* cmd) {
-	// Checking state of background commands
-	check_running_commands();
 	// Searching for &
 	if(strcmp(cmd->elements[cmd->size-1],"&") == 0) {
 		// If there is & at the end of the command, run it in background
@@ -38,12 +20,12 @@ void command_scheduler(tokens* cmd) {
 
 		pid_t pid = fork();
 		if(!pid) {
+			printf("[%d]\n", getpid());
 			command_runner(cmd);
 			exit(0);
 		} else {
 			background = realloc(background, (backgroundProcessNumber+1)*sizeof(pid_t));
 			background[backgroundProcessNumber++] = pid;
-			printf("[%d, %d]\n", backgroundProcessNumber, pid);
 		}
 	} else {
 		// Else, run the command in foreground
@@ -57,7 +39,8 @@ void command_scheduler(tokens* cmd) {
 			waitpid(pid, NULL, 0);
 			foreground = 0;
 		}*/
-		foreground = command_runner(cmd);
+		foreground = 0;
+		command_runner(cmd);
 		waitpid(foreground, NULL, 0);
 		foreground = 0;
 	}
@@ -65,4 +48,39 @@ void command_scheduler(tokens* cmd) {
 
 void kill_foreground() {
     if(foreground != 0) kill(-foreground, SIGINT);
+}
+
+pid_t get_background_pid() {
+	if(backgroundProcessNumber == 0) return 0;
+	pid_t pid = 0;
+	while(!pid && backgroundProcessNumber > 0) {
+		pid = background[--backgroundProcessNumber];
+		// If the process is not running, go to the next pid in the list
+		if(waitpid(pid, NULL, WNOHANG) != 0) pid = 0;
+	}
+	pid_t* newBackground = malloc((backgroundProcessNumber)*sizeof(pid_t));
+	for(int i = 0; i < backgroundProcessNumber; i++) {
+		newBackground[i] = background[i];
+	}
+	free(background);
+	background = newBackground;
+	return pid;
+}
+
+bool is_valid_pid(pid_t pid) {
+	for(int i = backgroundProcessNumber -1; i >= 0; i--) {
+		if(background[i] == pid) return true;
+	}
+	return false;
+}
+
+void put_in_foreground(pid_t pid) {
+	int status;
+	if(!pid) pid = get_background_pid();
+	else if(!is_valid_pid(pid)) return;
+	if(!pid) return;
+	foreground = pid;
+	pid = waitpid(pid, &status, 0);
+	foreground = 0;
+	printf("[%d->%d]\n", pid, WEXITSTATUS(status));
 }
