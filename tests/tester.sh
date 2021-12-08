@@ -57,6 +57,22 @@ if ! [ "$mo" = "$me" ]; then
 fi
 }
 
+displayNotTest() {
+echo Input:
+echo ------------------------------------------------
+cat $ti
+echo ------------------------------------------------
+echo Output:
+echo ------------------------------------------------
+cat $to
+echo ------------------------------------------------
+echo Expected output:
+echo ------------------------------------------------
+cat $te
+echo ------------------------------------------------
+echo -e "\n\n"
+}
+
 # enable Electric Fence
 export LD_PRELOAD=libefence.so.0.0
 export EF_DISABLE_BANNER=1
@@ -262,6 +278,19 @@ EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 display $ti $to $te
 
+# echo '######### Trying to test -e'
+# cat <<-EOF > $ti 2>&1
+# echo a
+# echo b
+# false
+# echo c
+# EOF
+# cat <<-EOF > $te 2>&1
+# a
+# b
+# EOF
+# timeout 2s bash -c "./tesh -e < $ti" > $to 2>&1
+# display $ti $to $te
 
  
 echo '######### Trying to test prompt'
@@ -287,6 +316,90 @@ cat <<-EOF > $te 2>&1
 EOF
 timeout 2s bash -c "python3 tests/ptytester.py ./tesh 'cd /'" > $to 2>&1
 display $ti $to $te
+
+
+echo '######### Trying to test fd leaks'
+cat <<-EOF > $ti 2>&1
+./tests/fdtester.sh cat ./tests/lorem-ipsum > /tmp/TMPFILE
+echo sortie de echo
+cat /tmp/TMPFILE
+EOF
+cat <<-EOF > $te 2>&1
+sortie de echo
+0 -> ***
+1 -> ***
+2 -> ***
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+EOF
+timeout 2s bash -c "./tesh < $ti" > $to 2>&1
+displayNotTest $ti $to $te
+if ! grep -Pzo "sortie de echo\n0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
+  echo "ERROR outputs do not match."
+  echo "(Ne pas tester dans VSCode)"
+  exit 1
+fi
+
+
+echo '######### Trying to test fd leaks 2'
+cat <<-EOF > $ti 2>&1
+./tests/fdtester.sh cat < ./tests/lorem-ipsum
+EOF
+cat <<-EOF > $te 2>&1
+0 -> ***
+1 -> ***
+2 -> ***
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+EOF
+timeout 2s bash -c "./tesh < $ti" > $to 2>&1
+displayNotTest $ti $to $te
+if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
+  echo "ERROR outputs do not match."
+  exit 1
+fi
+
+echo '######### Trying to test fd leaks 3'
+cat <<-EOF > $ti 2>&1
+./tests/fdtester.sh cat ./tests/lorem-ipsum > /tmp/TMPFILE
+./tests/fdtester.sh cat ./tests/lorem-ipsum > /tmp/TMPFILE
+./tests/fdtester.sh cat ./tests/lorem-ipsum >> /tmp/TMPFILE
+echo sortie de echo
+cat /tmp/TMPFILE
+EOF
+cat <<-EOF > $te 2>&1
+sortie de echo
+0 -> ***
+1 -> ***
+2 -> ***
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+0 -> ***
+1 -> ***
+2 -> ***
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+EOF
+timeout 2s bash -c "./tesh < $ti" > $to 2>&1
+displayNotTest $ti $to $te
+if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
+  echo "ERROR outputs do not match."
+  exit 1
+fi
+
+echo '######### Trying to test fd leaks 4'
+cat <<-EOF > $ti 2>&1
+cat ./tests/lorem-ipsum-long | ./tests/fdtester.sh grep Duis
+EOF
+cat <<-EOF > $te 2>&1
+0 -> ***
+1 -> ***
+2 -> ***
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+EOF
+timeout 2s bash -c "./tesh < $ti" > $to 2>&1
+displayNotTest $ti $to $te
+if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." $to > /dev/null; then
+  echo "ERROR outputs do not match."
+  exit 1
+fi
+
 
 
 if ldd tesh | grep -q libreadline; then
