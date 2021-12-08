@@ -73,5 +73,8 @@ void put_in_foreground(pid_t pid) {
 	foreground = pid;
 	pid = waitpid(pid, &status, 0);
 	foreground = 0;
-	printf("[%d->%d]\n", pid, WEXITSTATUS(status));
+	char* msg = malloc(32*sizeof(char));
+	snprintf(msg, 32,"[%d->%d]\n", pid, WEXITSTATUS(status));
+	write(STDOUT_FILENO, msg, strlen(msg));
+	free(msg);
 }
