@@ -13,8 +13,8 @@ if [ ! -f rapport.pdf ]; then
 fi
 
 echo '######### Installing dependencies'
-[[ -z $NODEP ]] && apt-get update
-[[ -z $NODEP ]] && apt-get -y install --no-install-recommends build-essential libreadline-dev electric-fence python3 python3-pip
+[[ -z $INDOCKER ]] || apt-get update
+[[ -z $INDOCKER ]] || apt-get -y install --no-install-recommends build-essential libreadline-dev electric-fence python3 python3-pip
 pip install ptyprocess
 
 
@@ -317,6 +317,7 @@ EOF
 timeout 2s bash -c "python3 tests/ptytester.py ./tesh 'cd /'" > $to 2>&1
 display $ti $to $te
 
+if [[ -z $INDOCKER ]]; then
 
 echo '######### Trying to test fd leaks'
 cat <<-EOF > $ti 2>&1
@@ -400,6 +401,7 @@ if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nDuis aute irure dolor in reprehenderit i
   exit 1
 fi
 
+fi
 
 
 if ldd tesh | grep -q libreadline; then
