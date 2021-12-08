@@ -10,7 +10,14 @@
 #include "signals.h"
 #include "prompt.h"
 #include "param.h"
+#define STDOUT_BUFFER_SIZE 4096
 
+
+/** @brief Read a line from a file descriptor or NULL if the fd is empty
+ * 
+ *  @param fd the file descriptor from which the content is read
+ *  @return a char* containing a line from the file descriptor
+ */
 char* readLineFrom(int fd) {
 	char* result = NULL;
 	int size = 0;
@@ -26,14 +33,24 @@ char* readLineFrom(int fd) {
 	return result;
 }
 
+/** @brief Print a line to stdout
+ * 
+ *  This function cut the char* given in chunks of 32 caracters and write them to stdout
+ *  to prevent the line to be cutted.
+ * 
+ *  @param line the line to print
+ */
 void printToStdout(char* line) {
-	for(int i=0; i < strlen(line); i+=32) {
-		write(STDOUT_FILENO, line+i, strlen(line)-i < 32 ? strlen(line)-i : 32);
+	for(int i=0; i < strlen(line); i+=STDOUT_BUFFER_SIZE) {
+		write(STDOUT_FILENO, line+i, strlen(line)-i < STDOUT_BUFFER_SIZE ? strlen(line)-i : STDOUT_BUFFER_SIZE);
 	}
 }
 
 int main(int argc, char *argv[])
 {
+	// Increasing the stdout buffer
+	static char stdoutbuf[STDOUT_BUFFER_SIZE];
+	setvbuf(stdout, stdoutbuf, _IOFBF, sizeof(stdoutbuf));
 	// Loading libreadline with dlopen
 	char* (*readline)(char*);
 	void* (*add_history)(char*);

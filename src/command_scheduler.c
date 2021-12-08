@@ -20,28 +20,19 @@ void command_scheduler(tokens* cmd, bool erreur) {
 
 		pid_t pid = fork();
 		if(!pid) {
-			printf("[%d]\n", getpid());
-			command_runner(cmd,false);
+			char* msg = malloc(32*sizeof(char));
+			snprintf(msg, 32, "[%d]\n", getpid());
+			write(STDOUT_FILENO, msg, strlen(msg));
+			free(msg);
+			command_runner(cmd, erreur);
 			exit(0);
 		} else {
 			background = realloc(background, (backgroundProcessNumber+1)*sizeof(pid_t));
 			background[backgroundProcessNumber++] = pid;
 		}
 	} else {
-		// Else, run the command in foreground
-		//pid_t pid = fork();
-		/*if(!pid) {
-			sig_setter_process();
-			command_runner(cmd);
-			exit(0);
-		} else {
-			foreground = pid;
-			waitpid(pid, NULL, 0);
-			foreground = 0;
-		}*/
 		foreground = 0;
 		command_runner(cmd,erreur);
-		waitpid(foreground, NULL, 0);
 		foreground = 0;
 	}
 }

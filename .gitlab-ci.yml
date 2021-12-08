@@ -24,7 +24,7 @@ test-script:
   script:
     - apt-get update && apt-get -y install build-essential libreadline-dev
     - chmod +x ./tests/tester.sh
-    - ./tests/tester.sh
+    - INDOCKER=1 ./tests/tester.sh
 
 tesh-tester: # do not modify this test
   stage: tesh-tester
