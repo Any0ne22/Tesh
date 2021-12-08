@@ -8,7 +8,7 @@ pid_t* background = NULL;
 int backgroundProcessNumber = 0;
 
 
-void command_scheduler(tokens* cmd) {
+void command_scheduler(tokens* cmd, bool erreur) {
 	// Searching for &
 	if(strcmp(cmd->elements[cmd->size-1],"&") == 0) {
 		// If there is & at the end of the command, run it in background
@@ -21,7 +21,7 @@ void command_scheduler(tokens* cmd) {
 		pid_t pid = fork();
 		if(!pid) {
 			printf("[%d]\n", getpid());
-			command_runner(cmd);
+			command_runner(cmd,false);
 			exit(0);
 		} else {
 			background = realloc(background, (backgroundProcessNumber+1)*sizeof(pid_t));
@@ -40,7 +40,7 @@ void command_scheduler(tokens* cmd) {
 			foreground = 0;
 		}*/
 		foreground = 0;
-		command_runner(cmd);
+		command_runner(cmd,erreur);
 		waitpid(foreground, NULL, 0);
 		foreground = 0;
 	}
