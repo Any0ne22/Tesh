@@ -11,6 +11,13 @@
 #include "prompt.h"
 #include "param.h"
 
+
+
+/** @brief Read a line from a file descriptor or NULL if the fd is empty
+ * 
+ *  @param fd the file descriptor from which the content is read
+ *  @return a char* containing a line from the file descriptor
+ */
 char* readLineFrom(int fd) {
 	char* result = NULL;
 	int size = 0;
@@ -26,6 +33,13 @@ char* readLineFrom(int fd) {
 	return result;
 }
 
+/** @brief Print a line to stdout
+ * 
+ *  This function cut the char* given in chunks of 32 caracters and write them to stdout
+ *  to prevent the line to be cutted.
+ * 
+ *  @param line the line to print
+ */
 void printToStdout(char* line) {
 	for(int i=0; i < strlen(line); i+=32) {
 		write(STDOUT_FILENO, line+i, strlen(line)-i < 32 ? strlen(line)-i : 32);
@@ -34,6 +48,8 @@ void printToStdout(char* line) {
 
 int main(int argc, char *argv[])
 {
+	static char stdoutbuf[16384];
+	setvbuf(stdout, stdoutbuf, _IOFBF, sizeof(stdoutbuf));
 	// Loading libreadline with dlopen
 	char* (*readline)(char*);
 	void* (*add_history)(char*);
@@ -67,7 +83,8 @@ int main(int argc, char *argv[])
 			(*add_history)(input);
 		} else if (interactive) {
 			char* prompt = make_prompt();
-			printToStdout(prompt);
+			//printToStdout(prompt);
+			write(STDOUT_FILENO, prompt, strlen(prompt));
 			free(prompt);
 			input = readLineFrom(source);
 		} else {
