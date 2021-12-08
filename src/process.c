@@ -1,5 +1,5 @@
 #include "process.h"
-
+#include <string.h>
 process* new_process() {
 	process* p = calloc(1,sizeof(process));
 	pipe(p->fd_out);
@@ -29,14 +29,15 @@ process* piped_process_from_file(char* filename) {
 
 int launch_process(process* p, char* args[], bool pipeOutput) {
 	if(args[0] == NULL) return -1;	//If there are no arguments
+	if(pipeOutput) p->isPiped = true;
 	int pid = fork();
 	if(!pid) {
 		// Child process
+		close(p->fd_out[0]);
 		if (pipeOutput) {
-			close(p->fd_out[0]);
-    		dup2(p->fd_out[1],STDOUT_FILENO);
-			close(p->fd_out[1]);
+    		dup2(p->fd_out[1],STDOUT_FILENO);			
 		}
+		close(p->fd_out[1]);
 
 		if(p->fd_in[0] != 0 || p->fd_in[1] != 0) {
 			// Pipe the standard input to the fd if it is initialized
@@ -66,15 +67,16 @@ int launch_process(process* p, char* args[], bool pipeOutput) {
 
 int pipe_to_file(process* p, char* args[], char* filename, bool append) {
 	if(args[0] == NULL) return -1;	//If there are no arguments
+	p->isPiped = false;
 	int pid = fork();
 	if(!pid) {
-		// Connecting the output of the process to a file descriptor
 		close(p->fd_out[0]);
 		close(p->fd_out[1]);
 
 		// Open the file with the user rights and create it if necessary
 		int flags = (append ? O_APPEND : O_TRUNC) | O_WRONLY | O_CREAT;
 		int file_fd = open(filename, flags, S_IRUSR | S_IWUSR);
+		// Connecting the output of the process to a file descriptor
     	dup2(file_fd,STDOUT_FILENO);
 		close(file_fd);
 
@@ -114,5 +116,9 @@ int wait_status(process* p) {
 }
 
 void free_process(process* p) {
+	if(!p->isPiped) {
+		close(p->fd_out[0]);
+		close(p->fd_out[1]);
+	}
 	free(p);
 }

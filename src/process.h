@@ -29,6 +29,7 @@ typedef struct _process {
 	int fd_in[2];	///< a file descriptor which can be piped to stdin
 	int fd_out[2];	///< a file descriptor which can be piped to stdout
 	int status;		///< the execution status of the process
+	bool isPiped;	///< if the output of the process is piped
 	pid_t pid;		///< the pid of the process
 } process;
 
