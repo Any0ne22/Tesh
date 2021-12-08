@@ -20,7 +20,10 @@ void command_scheduler(tokens* cmd) {
 
 		pid_t pid = fork();
 		if(!pid) {
-			printf("[%d]\n", getpid());
+			char* msg = malloc(32*sizeof(char));
+			snprintf(msg, 32, "[%d]\n", getpid());
+			write(STDOUT_FILENO, msg, strlen(msg));
+			free(msg);
 			command_runner(cmd);
 			exit(0);
 		} else {
@@ -28,20 +31,8 @@ void command_scheduler(tokens* cmd) {
 			background[backgroundProcessNumber++] = pid;
 		}
 	} else {
-		// Else, run the command in foreground
-		//pid_t pid = fork();
-		/*if(!pid) {
-			sig_setter_process();
-			command_runner(cmd);
-			exit(0);
-		} else {
-			foreground = pid;
-			waitpid(pid, NULL, 0);
-			foreground = 0;
-		}*/
 		foreground = 0;
 		command_runner(cmd);
-		waitpid(foreground, NULL, 0);
 		foreground = 0;
 	}
 }
