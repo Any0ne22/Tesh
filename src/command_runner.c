@@ -1,4 +1,6 @@
 #include "command_runner.h"
+#include "command_scheduler.h"
+#include <ctype.h>
 
 pid_t command_runner(tokens* theToken,bool erreur){
     /* fonction qui va noter les ; et || et va rediriger dans un 
@@ -12,8 +14,14 @@ pid_t command_runner(tokens* theToken,bool erreur){
             make_cd(theToken->elements[i+1]);
             i++;
         }
-        else if (strcmp(theToken->elements[i],"false")==0){
-            exit(1);
+        if(i==0 && strcmp(theToken->elements[i],"fg")==0){
+            if(theToken->size>=i+1 && isdigit(theToken->elements[i+1])){
+                put_in_foreground(atoi(theToken->elements[i+1]));
+            }
+            else{
+                put_in_foreground(0);
+            }
+            i++;
         }
         else if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
