@@ -31,7 +31,7 @@
  * 
  *  @param cmd an array of tokens with the command to run
  */
-void command_scheduler(tokens* cmd);
+void command_scheduler(tokens* cmd,bool erreur);
 
 /** @brief Kill the command running in foreground
  * 

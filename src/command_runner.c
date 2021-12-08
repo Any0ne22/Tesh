@@ -1,6 +1,6 @@
 #include "command_runner.h"
 
-pid_t command_runner(tokens* theToken){
+pid_t command_runner(tokens* theToken,bool erreur){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
@@ -12,13 +12,19 @@ pid_t command_runner(tokens* theToken){
             make_cd(theToken->elements[i+1]);
             i++;
         }
+        else if (strcmp(theToken->elements[i],"false")==0){
+            exit(1);
+        }
         else if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
                 pour exécution les commandes d'après*/
             isSkipped =false;
             isSuccessful = true,
             launch_and_print(p, theCommand->elements);
-            wait_status(p);
+            int status=wait_status(p);
+            if(status!=0 && erreur){
+                exit(1);
+            }
             free_process(p);
             p = new_process();   
             clear_tokens(theCommand);
@@ -43,9 +49,9 @@ pid_t command_runner(tokens* theToken){
             else{
                 isSkipped = true;
                 isSuccessful = false;
+                if (erreur)exit(1);
             }
         }
-        /* rajouter si on l'execute après un point virgule quand meme avec un booléen*/
 
         else if(strcmp(theToken->elements[i],"||")==0){
             /* il faut exécuter la commande d'avant et celle d'après uniquement si le code 
@@ -60,6 +66,7 @@ pid_t command_runner(tokens* theToken){
             p = new_process();
             clear_tokens(theCommand);
             if(retour!=0){
+                if (erreur)exit(1);
                 isSuccessful = false;
                 continue;
             }
@@ -80,17 +87,23 @@ pid_t command_runner(tokens* theToken){
         }
         else if(strcmp(theToken->elements[i],">")==0){
             pipe_to_file(p,theCommand->elements,theToken->elements[i+1],false);
-            wait_status(p);
+            int status=wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
+            if(status!=0 && erreur){
+                exit(1);
+            }
             p = new_process();
             isSkipped=true;
         }
         else if(strcmp(theToken->elements[i],">>")==0){
             pipe_to_file(p,theCommand->elements,theToken->elements[i+1],true);
-            wait_status(p);
+            int status=wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
+            if(status!=0 && erreur){
+                exit(1);
+            }
             p = new_process();
             i++;
         }
@@ -104,10 +117,13 @@ pid_t command_runner(tokens* theToken){
         }
     }              
     launch_and_print(p, theCommand->elements);
-    wait_status(p);
+    int status=wait_status(p);
     pid_t pid = p->pid;
     free_process(p);
-    destroy_tokens(theCommand);         
+    destroy_tokens(theCommand);
+    if(status!=0 && erreur){
+        exit(1);
+    }         
     return pid;
 }
 

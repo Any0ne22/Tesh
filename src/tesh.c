@@ -86,10 +86,11 @@ int main(int argc, char *argv[])
 
 		tokens* tokens = parse(input);
 		free(input);
-		command_scheduler(tokens);
+		if(param->erreur)command_scheduler(tokens, true);
+		else command_scheduler(tokens,false);
 		destroy_tokens(tokens);
 	}
-
+	destroy_param(param);
 	if(!interactive) close(source);
     return EXIT_SUCCESS;
 }

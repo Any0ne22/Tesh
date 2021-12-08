@@ -27,4 +27,4 @@
  *  @param p the parsed command to execute
  *  @return void
  */
-pid_t command_runner(tokens* theToken);
+pid_t command_runner(tokens* theToken, bool erreur);
