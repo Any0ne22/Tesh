@@ -10,7 +10,7 @@
 #include "signals.h"
 #include "prompt.h"
 #include "param.h"
-
+#define STDOUT_BUFFER_SIZE 4096
 
 
 /** @brief Read a line from a file descriptor or NULL if the fd is empty
@@ -41,14 +41,15 @@ char* readLineFrom(int fd) {
  *  @param line the line to print
  */
 void printToStdout(char* line) {
-	for(int i=0; i < strlen(line); i+=32) {
-		write(STDOUT_FILENO, line+i, strlen(line)-i < 32 ? strlen(line)-i : 32);
+	for(int i=0; i < strlen(line); i+=STDOUT_BUFFER_SIZE) {
+		write(STDOUT_FILENO, line+i, strlen(line)-i < STDOUT_BUFFER_SIZE ? strlen(line)-i : STDOUT_BUFFER_SIZE);
 	}
 }
 
 int main(int argc, char *argv[])
 {
-	static char stdoutbuf[16384];
+	// Increasing the stdout buffer
+	static char stdoutbuf[STDOUT_BUFFER_SIZE];
 	setvbuf(stdout, stdoutbuf, _IOFBF, sizeof(stdoutbuf));
 	// Loading libreadline with dlopen
 	char* (*readline)(char*);
@@ -83,8 +84,7 @@ int main(int argc, char *argv[])
 			(*add_history)(input);
 		} else if (interactive) {
 			char* prompt = make_prompt();
-			//printToStdout(prompt);
-			write(STDOUT_FILENO, prompt, strlen(prompt));
+			printToStdout(prompt);
 			free(prompt);
 			input = readLineFrom(source);
 		} else {
