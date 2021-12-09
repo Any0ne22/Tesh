@@ -67,6 +67,10 @@ int main(int argc, char *argv[])
 	int source = STDIN_FILENO;
 	if(param->fichier != NULL) {
 		source = open(param->fichier, O_RDONLY, S_IRUSR);
+		if(errno == ENOENT){
+			printf("File not found %s\n", param->fichier);
+			exit(1);
+		}
 		interactive = false;
 	}
 
