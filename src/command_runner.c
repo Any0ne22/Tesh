@@ -31,7 +31,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             launch_and_print(p, theCommand->elements);
             int status=wait_status(p);
             if(status!=0 && erreur){
-                exit(1);
+                exit(0);
             }
             free_process(p);
             p = new_process();   
@@ -57,7 +57,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             else{
                 isSkipped = true;
                 isSuccessful = false;
-                if (erreur)exit(1);
+                if (erreur)exit(0);
             }
         }
 
@@ -74,7 +74,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             p = new_process();
             clear_tokens(theCommand);
             if(retour!=0){
-                if (erreur)exit(1);
+                if (erreur)exit(0);
                 isSuccessful = false;
                 continue;
             }
@@ -99,7 +99,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             clear_tokens(theCommand);
             free_process(p);
             if(status!=0 && erreur){
-                exit(1);
+                exit(0);
             }
             p = new_process();
             isSkipped=true;
@@ -110,7 +110,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             clear_tokens(theCommand);
             free_process(p);
             if(status!=0 && erreur){
-                exit(1);
+                exit(0);
             }
             p = new_process();
             i++;
@@ -130,7 +130,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
     free_process(p);
     destroy_tokens(theCommand);
     if(status!=0 && erreur){
-        exit(1);
+        exit(0);
     }         
     return pid;
 }
