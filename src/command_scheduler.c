@@ -23,6 +23,7 @@ void command_scheduler(tokens* cmd, bool erreur) {
 			char* msg = malloc(32*sizeof(char));
 			snprintf(msg, 32, "[%d]\n", getpid());
 			write(STDOUT_FILENO, msg, strlen(msg));
+			fflush(stdout);
 			free(msg);
 			command_runner(cmd, erreur);
 			exit(0);
@@ -43,12 +44,7 @@ void kill_foreground() {
 
 pid_t get_background_pid() {
 	if(backgroundProcessNumber == 0) return 0;
-	pid_t pid = 0;
-	while(!pid && backgroundProcessNumber > 0) {
-		pid = background[--backgroundProcessNumber];
-		// If the process is not running, go to the next pid in the list
-		if(waitpid(pid, NULL, WNOHANG) != 0) pid = 0;
-	}
+	pid_t pid = background[--backgroundProcessNumber];
 	pid_t* newBackground = malloc((backgroundProcessNumber)*sizeof(pid_t));
 	for(int i = 0; i < backgroundProcessNumber; i++) {
 		newBackground[i] = background[i];

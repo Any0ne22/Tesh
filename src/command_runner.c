@@ -1,6 +1,5 @@
 #include "command_runner.h"
 #include "command_scheduler.h"
-#include <ctype.h>
 
 pid_t command_runner(tokens* theToken,bool erreur){
     /* fonction qui va noter les ; et || et va rediriger dans un 
@@ -15,7 +14,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
             i++;
         }
         if(i==0 && strcmp(theToken->elements[i],"fg")==0){
-            if(theToken->size>=i+1 && isdigit(theToken->elements[i+1])){
+            if(theToken->size>=i+2 && isnumber(theToken->elements[i+1])){
                 put_in_foreground(atoi(theToken->elements[i+1]));
             }
             else{

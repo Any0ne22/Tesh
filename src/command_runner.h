@@ -16,9 +16,10 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>   
+#include <fcntl.h>
 #include "builtins.h"
 #include "stdbool.h"
+#include "utils.h"
 
 /** @brief Execute the command
  * 
