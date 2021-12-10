@@ -1,5 +1,5 @@
 /** @file utils.h
- *  @brief Some usefull functions
+ *  @brief Some useful functions
  *
  *  This file contains the function signatures of many utility functions
  *
@@ -17,7 +17,11 @@
 
 #define STDOUT_BUFFER_SIZE 4096
 
-
+/** @brief Check if a char* is a number
+ * 
+ *  @param str the string to check
+ *  @return true if the string is a number
+ */
 bool isnumber(char* str);
 
 /** @brief Read a line from a file descriptor or NULL if the fd is empty

@@ -1,7 +1,7 @@
 #include "command_runner.h"
 #include "command_scheduler.h"
 
-pid_t command_runner(tokens* theToken,bool erreur){
+int command_runner(tokens* theToken,bool erreur){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
@@ -12,8 +12,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
         if(i==0 && strcmp(theToken->elements[i],"cd")==0){
             make_cd(theToken->elements[i+1]);
             i++;
-        }
-        if(i==0 && strcmp(theToken->elements[i],"fg")==0){
+        } else if(i==0 && strcmp(theToken->elements[i],"fg")==0){
             if(theToken->size>=i+2 && isnumber(theToken->elements[i+1])){
                 put_in_foreground(atoi(theToken->elements[i+1]));
             }
@@ -21,6 +20,7 @@ pid_t command_runner(tokens* theToken,bool erreur){
                 put_in_foreground(0);
             }
             i++;
+            clear_tokens(theCommand);
         }
         else if(strcmp(theToken->elements[i],";")==0){
             /* on exécute la commande d'avant et on continue à stocker 
@@ -122,15 +122,19 @@ pid_t command_runner(tokens* theToken,bool erreur){
         else{
             add_token(theCommand,theToken->elements[i]);
         }
-    }              
-    launch_and_print(p, theCommand->elements);
-    int status=wait_status(p);
-    pid_t pid = p->pid;
+    }
+    int status = 0;
+    if(theCommand->size > 0) {
+        // If there is a last command, execute it
+        launch_and_print(p, theCommand->elements);
+        status = wait_status(p);
+    }
+
     free_process(p);
     destroy_tokens(theCommand);
     if(status!=0 && erreur){
         exit(0);
     }         
-    return pid;
+    return status;
 }
 

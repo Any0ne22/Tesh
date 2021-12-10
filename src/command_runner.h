@@ -26,6 +26,6 @@
  *  Search the elements of the command and execute them in order 
  * 
  *  @param p the parsed command to execute
- *  @return void
+ *  @return the status of the last command
  */
-pid_t command_runner(tokens* theToken, bool erreur);
+int command_runner(tokens* theToken, bool erreur);
