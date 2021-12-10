@@ -54,22 +54,21 @@ int main(int argc, char *argv[])
 	// Loading libreadline with dlopen
 	char* (*readline)(char*);
 	void* (*add_history)(char*);
-	void* handle;
-	handle = dlopen("libreadline.so", RTLD_NOW);
+	void* handle = dlopen("libreadline.so", RTLD_NOW);
 	*(void **) (&readline) = dlsym(handle, "readline");
 	*(void **) (&add_history) = dlsym(handle, "add_history");
 
+	// Parsing args
 	parametres* param = read_param(argc,argv);
 	bool interactive = false;
 	if (isatty(STDIN_FILENO)) interactive = true;
 
-	// Parsing args
 	int source = STDIN_FILENO;
 	if(param->fichier != NULL) {
 		source = open(param->fichier, O_RDONLY, S_IRUSR);
 		if(errno == ENOENT){
 			printf("File not found %s\n", param->fichier);
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 		interactive = false;
 	}
@@ -107,8 +106,7 @@ int main(int argc, char *argv[])
 
 		tokens* tokens = parse(input);
 		free(input);
-		if(param->erreur)command_scheduler(tokens, true);
-		else command_scheduler(tokens,false);
+		command_scheduler(tokens, param->erreur);
 		destroy_tokens(tokens);
 	}
 	destroy_param(param);
