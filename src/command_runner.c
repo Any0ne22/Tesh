@@ -10,11 +10,11 @@ pid_t command_runner(tokens* theToken,bool erreur){
     bool isSkipped = false;
     bool isSuccessful = true;
     for(int i=0; i<theToken->size;i++){
-        if(i==0 && strcmp(theToken->elements[i],"cd")==0){
+        if(theCommand->size==0 && strcmp(theToken->elements[i],"cd")==0){
             make_cd(theToken->elements[i+1]);
             i++;
         }
-        if(i==0 && strcmp(theToken->elements[i],"fg")==0){
+        if(theCommand->size==0 && strcmp(theToken->elements[i],"fg")==0){
             if(theToken->size>=i+1 && isdigit(theToken->elements[i+1])){
                 put_in_foreground(atoi(theToken->elements[i+1]));
             }
