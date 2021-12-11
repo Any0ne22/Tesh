@@ -16,15 +16,16 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>   
+#include <fcntl.h>
 #include "builtins.h"
 #include "stdbool.h"
+#include "utils.h"
 
 /** @brief Execute the command
  * 
  *  Search the elements of the command and execute them in order 
  * 
  *  @param p the parsed command to execute
- *  @return void
+ *  @return the status of the last command
  */
-pid_t command_runner(tokens* theToken, bool erreur);
+int command_runner(tokens* theToken, bool erreur);

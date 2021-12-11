@@ -1,5 +1,8 @@
 #include "command_scheduler.h"
 
+
+#include <string.h>
+
 /// The PID of the command running in foreground
 pid_t foreground = 0;
 /// A list of PIDs of processes running in background
@@ -23,27 +26,27 @@ void command_scheduler(tokens* cmd, bool erreur) {
 			char* msg = malloc(32*sizeof(char));
 			snprintf(msg, 32, "[%d]\n", getpid());
 			write(STDOUT_FILENO, msg, strlen(msg));
+			fflush(stdout);
 			free(msg);
-			command_runner(cmd, erreur);
-			exit(0);
+			int status = command_runner(cmd, erreur);
+			exit(status);
 		} else {
 			background = realloc(background, (backgroundProcessNumber+1)*sizeof(pid_t));
 			background[backgroundProcessNumber++] = pid;
 		}
 	} else {
-		foreground = 0;
 		command_runner(cmd,erreur);
-		foreground = 0;
 	}
 }
 
+/// Not used for now
 void kill_foreground() {
     if(foreground != 0) kill(-foreground, SIGINT);
 }
 
 pid_t get_background_pid() {
 	if(backgroundProcessNumber == 0) return 0;
-	pid_t pid = 0;
+	pid_t pid = background[--backgroundProcessNumber];
 	while(!pid && backgroundProcessNumber > 0) {
 		pid = background[--backgroundProcessNumber];
 		// If the process is not running, go to the next pid in the list
@@ -71,7 +74,7 @@ void put_in_foreground(pid_t pid) {
 	else if(!is_valid_pid(pid)) return;
 	if(!pid) return;
 	foreground = pid;
-	pid = waitpid(pid, &status, 0);
+	pid = waitpid(pid, &status, WUNTRACED);
 	foreground = 0;
 	char* msg = malloc(32*sizeof(char));
 	snprintf(msg, 32,"[%d->%d]\n", pid, WEXITSTATUS(status));

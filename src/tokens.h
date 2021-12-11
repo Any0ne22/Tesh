@@ -7,6 +7,9 @@
  *  @author Amélie Ferstler (amelie.ferstler@telecomnancy.eu)
  */
 #pragma once
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /** @brief A struct for managing tokens
  * 

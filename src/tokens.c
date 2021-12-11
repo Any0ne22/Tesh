@@ -1,9 +1,4 @@
 #include "tokens.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-
 
 
 tokens* new_tokens(){
