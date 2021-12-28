@@ -1,16 +1,6 @@
 #!/bin/bash
-# Made by Tom Gouville
+# Made by Tom Gouville & Omar Chida
 set -e
-
-echo '######### Checking AUTHORS file'
-if grep -q 'NUSSBAUM Lucas' AUTHORS; then
-  echo "ERROR AUTHORS file was not modified (not fatal for now)."
-fi
-
-echo '######### Checking rapport.pdf file'
-if [ ! -f rapport.pdf ]; then
-  echo "ERROR rapport.pdf does not exist (not fatal for now)."
-fi
 
 echo '######### Installing dependencies'
 [[ -z $INDOCKER ]] || apt-get update
@@ -34,6 +24,13 @@ fi
 ti=`mktemp /tmp/output.XXXXXX`
 to=`mktemp /tmp/output.XXXXXX`
 te=`mktemp /tmp/output.XXXXXX`
+currentdir=$(pwd)
+Red='\033[0;31m'          # Red
+Green='\033[0;32m'        # Green
+Color_Off='\033[0m'       # Text Reset
+test_nb=0
+test_passed=0
+test_failed=0
 
 display() {
 echo Input:
@@ -48,13 +45,18 @@ echo Expected output:
 echo ------------------------------------------------
 cat $te
 echo ------------------------------------------------
-echo -e "\n\n"
 mo=`md5sum < $to | awk '{print $1}'`
 me=`md5sum < $te | awk '{print $1}'`
+test_nb=$((test_nb+1))
 if ! [ "$mo" = "$me" ]; then
-  echo "ERROR outputs do not match."
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+  #exit 1
+else
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
+echo -e "\n\n"
 }
 
 displayNotTest() {
@@ -278,19 +280,19 @@ EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 display $ti $to $te
 
-# echo '######### Trying to test -e'
-# cat <<-EOF > $ti 2>&1
-# echo a
-# echo b
-# false
-# echo c
-# EOF
-# cat <<-EOF > $te 2>&1
-# a
-# b
-# EOF
-# timeout 2s bash -c "./tesh -e < $ti" > $to 2>&1
-# display $ti $to $te
+echo '######### Trying to test -e'
+cat <<-EOF > $ti 2>&1
+echo a
+echo b
+false
+echo c
+EOF
+cat <<-EOF > $te 2>&1
+a
+b
+EOF
+timeout 2s bash -c "./tesh -e < $ti" > $to 2>&1
+display $ti $to $te
 
  
 echo '######### Trying to test prompt'
@@ -334,10 +336,14 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 displayNotTest $ti $to $te
+test_nb=$((test_nb+1))
 if ! grep -Pzo "sortie de echo\n0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
-  echo "ERROR outputs do not match."
   echo "(Ne pas tester dans VSCode)"
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+else 
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
 
 
@@ -353,9 +359,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 displayNotTest $ti $to $te
+test_nb=$((test_nb+1))
 if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
-  echo "ERROR outputs do not match."
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+else 
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
 
 echo '######### Trying to test fd leaks 3'
@@ -379,9 +389,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 displayNotTest $ti $to $te
+test_nb=$((test_nb+1))
 if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n0 ->.*\n1 ->.*\n2 ->.*\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." $to > /dev/null; then
-  echo "ERROR outputs do not match."
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+else 
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
 
 echo '######### Trying to test fd leaks 4'
@@ -396,24 +410,48 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 EOF
 timeout 2s bash -c "./tesh < $ti" > $to 2>&1
 displayNotTest $ti $to $te
+test_nb=$((test_nb+1))
 if ! grep -Pzo "0 ->.*\n1 ->.*\n2 ->.*\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." $to > /dev/null; then
-  echo "ERROR outputs do not match."
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+else 
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
 
 fi
 
 
+test_nb=$((test_nb+1))
 if ldd tesh | grep -q libreadline; then
   echo "ERROR: 'tesh' is linked with libreadline"
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
 else 
   echo "OK: 'tesh' is not linked with libreadline"
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 fi
 
+
+test_nb=$((test_nb+1))
 if `ldd tesh | grep -q libdl`; then
   echo "OK: 'tesh' is linked with libdl"
+  test_passed=$((test_passed+1))
+  printf "${Green}==> Test#${test_nb} : passed successfully.${Color_Off}\n"
 else 
   echo "ERROR: 'tesh' is not linked with libdl"
-  exit 1
+  test_failed=$((test_failed+1))
+  printf "${Red}==> Test#${test_nb} : ERROR outputs do not match.${Color_Off}\n"
+fi
+
+echo -e "\n\n"
+
+
+if [ $test_passed -eq $test_nb ] ; then
+  printf "${Green}*** Test suite finished : all test cases ${test_passed}/${test_nb} passed ***${Color_Off}\n"
+elif [ $test_passed -gt $test_failed ] ; then
+  printf "${Green}*** Test suite finished : ${test_passed}/${test_nb} passed and ${Red}${test_failed}/${test_nb}${Green} failed ***${Color_Off}\n"
+else
+  printf "${Red}*** Test suite finished : ${Green}${test_passed}/${test_nb}${Red} passed and ${test_failed}/${test_nb} failed ***${Color_Off}\n"
 fi

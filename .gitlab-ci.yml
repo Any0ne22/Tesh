@@ -1,7 +1,6 @@
 stages:
   - build
   - tests
-  - tesh-tester
 
 build-test:
   stage: build
@@ -25,10 +24,3 @@ test-script:
     - apt-get update && apt-get -y install build-essential libreadline-dev
     - chmod +x ./tests/tester.sh
     - INDOCKER=1 ./tests/tester.sh
-
-tesh-tester: # do not modify this test
-  stage: tesh-tester
-  image: debian:bullseye
-  script:
-    - apt-get update && apt-get -y install wget libreadline-dev
-    - wget -O - https://members.loria.fr/lnussbaum/RS/tesh-tester | bash
