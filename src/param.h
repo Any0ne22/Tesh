@@ -28,8 +28,8 @@ parametres* new_param();
  * 
  *  Read the command line parameters and store their informations in a 
  *  new struct 
- *  @param p1 the number of arguments passed in the command line
- *  @param p2 a table of the arguments
+ *  @param argc the number of arguments passed in the command line
+ *  @param argv an array of arguments
  *  @return a pointer to the structure
  */
 parametres* read_param(int argc, char* argv[]);
@@ -37,6 +37,7 @@ parametres* read_param(int argc, char* argv[]);
 /** @brief Free the memory
  * 
  *  Free the memory occupied by a struct of parameters
+ *  @param param a pointer to a param struct
  *  @return void
  */
 void destroy_param(parametres* param);

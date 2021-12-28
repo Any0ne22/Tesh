@@ -30,8 +30,9 @@
  *  run in foreground and the command return when the process ends.
  * 
  *  @param cmd an array of tokens with the command to run
+ *  @param error set to true if you want to kill tesh on command status != 0
  */
-void command_scheduler(tokens* cmd,bool erreur);
+void command_scheduler(tokens* cmd,bool error);
 
 /** @brief Kill the command running in foreground
  * 

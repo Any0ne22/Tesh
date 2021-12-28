@@ -1,7 +1,7 @@
 #include "command_runner.h"
 #include "command_scheduler.h"
 
-int command_runner(tokens* theToken,bool erreur){
+int command_runner(tokens* theToken,bool error){
     /* fonction qui va noter les ; et || et va rediriger dans un 
     nouveau tableau les commadnes suivantes et exécuter la première si nécessaire*/
     tokens* theCommand = new_tokens();
@@ -29,7 +29,7 @@ int command_runner(tokens* theToken,bool erreur){
             isSuccessful = true,
             launch_and_print(p, theCommand->elements);
             int status=wait_status(p);
-            if(status!=0 && erreur){
+            if(status!=0 && error){
                 exit(0);
             }
             free_process(p);
@@ -56,7 +56,7 @@ int command_runner(tokens* theToken,bool erreur){
             else{
                 isSkipped = true;
                 isSuccessful = false;
-                if (erreur)exit(0);
+                if (error)exit(0);
             }
         }
 
@@ -73,7 +73,7 @@ int command_runner(tokens* theToken,bool erreur){
             p = new_process();
             clear_tokens(theCommand);
             if(retour!=0){
-                if (erreur)exit(0);
+                if (error)exit(0);
                 isSuccessful = false;
                 continue;
             }
@@ -97,7 +97,7 @@ int command_runner(tokens* theToken,bool erreur){
             int status=wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
-            if(status!=0 && erreur){
+            if(status!=0 && error){
                 exit(0);
             }
             p = new_process();
@@ -108,7 +108,7 @@ int command_runner(tokens* theToken,bool erreur){
             int status=wait_status(p);
             clear_tokens(theCommand);
             free_process(p);
-            if(status!=0 && erreur){
+            if(status!=0 && error){
                 exit(0);
             }
             p = new_process();
@@ -132,7 +132,7 @@ int command_runner(tokens* theToken,bool erreur){
 
     free_process(p);
     destroy_tokens(theCommand);
-    if(status!=0 && erreur){
+    if(status!=0 && error){
         exit(0);
     }         
     return status;

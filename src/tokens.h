@@ -25,16 +25,16 @@ typedef struct _tokens{
  * 
  *  Separate each word of a command and store them in a struct
  * 
- *  @param p1 the command to parse
+ *  @param input the command to parse
  *  @return a pointer to the tokens that contain the parsed command
  */
 tokens* parse(char* input);
 
-/** @brief Destroy toeksn struct
+/** @brief Destroy tokens struct
  * 
  *  Clear the struct of all the tokens and then destroy the structure
  *  
- *  @param p1 the tokens
+ *  @param theToken a pointer to a tokens struct
  *  @return void
  */
 void destroy_tokens(tokens * theToken);
@@ -51,8 +51,8 @@ tokens* new_tokens();
  * 
  *  Add a token at the end of a tokens structure 
  * 
- *  @param p1 the tokens 
- *  @param p2 the token to add
+ *  @param theToken a tokens struct pointer
+ *  @param input the token to add
  *  @return void
  */
 void add_token(tokens* theToken, char* input);
@@ -61,7 +61,7 @@ void add_token(tokens* theToken, char* input);
  * 
  *  Clear the tokens from all the parsed elements, which leaves an empty structure
  * 
- *  @param p1 the tokens
+ *  @param theToken a tokens struct pointer
  *  @return void
  */
 void clear_tokens(tokens* theToken);

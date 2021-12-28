@@ -25,7 +25,8 @@
  * 
  *  Search the elements of the command and execute them in order 
  * 
- *  @param p the parsed command to execute
+ *  @param theToken the parsed command to execute
+ *  @param error set to true if you want to kill tesh on command status != 0
  *  @return the status of the last command
  */
-int command_runner(tokens* theToken, bool erreur);
+int command_runner(tokens* theToken, bool error);
